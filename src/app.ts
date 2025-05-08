@@ -1,26 +1,14 @@
 import express from 'express';
 import apiRoutes from './routes/apiRoutes'
-import sequelize from './config/database';
+import swaggerSpec from './swagger';
+import swaggerUi from 'swagger-ui-express';
 
 const app = express();
 // Using express.json to parse req body
 app.use(express.json());
 
-async function connectSequelize() {
-    try {
-        await sequelize.authenticate();
-        console.log('connection established to the database');
-    }catch (error) {
-        console.error('unable to connect database:', error);
-    }
-}
-
-connectSequelize();
 app.use('/api/v1', apiRoutes);
-app.use('/', (req, res) => {
-    console.log(req)
-    res.send('Index is working');
-})
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
 export default app;
